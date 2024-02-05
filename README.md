@@ -52,9 +52,9 @@ static KEY_VALUE getKey(void) {
   }
 }
 
-/* 注册按键，25ms 有效电平过滤，500ms 老化时间  */
+/* 注册按键，25ms 有效电平过滤，500ms 老化时间，1000ms 长按判定时间  */
 #define KEY_ID 0
-key_register(KEY_ID, getKey, NULL, 25, 500);
+key_register(KEY_ID, getKey, NULL, 25, 500, 1000);
 
 /* 1ms 周期执行 */
 KEY *key = key_find_by_id(KEY_ID);
