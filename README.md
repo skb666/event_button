@@ -56,6 +56,9 @@ static KEY_VALUE getKey(void) {
 #define KEY_ID 0
 key_register(KEY_ID, getKey, NULL, 25, 500, 1000);
 
+/* 注销按键 */
+key_unregister(KEY_ID);
+
 /* 1ms 周期执行 */
 KEY *key = key_find_by_id(KEY_ID);
 KEY_EVENT k_ev = combo_key_event_check(key);
