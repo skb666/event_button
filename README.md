@@ -52,16 +52,55 @@ static KEY_VALUE getKey(void) {
   }
 }
 
-/* 注册按键，25ms 有效电平过滤，500ms 老化时间，1000ms 长按判定时间  */
+/* 注册按键，25ms 有效电平过滤，500ms 老化时间，1000ms 长按判定时间 */
 #define KEY_ID 0
-key_register(KEY_ID, getKey, NULL, 25, 500, 1000);
+static KEY keys[] = {
+    {
+        .id = KEY_ID,
+        .get = getKey,
+        .custom_data = NULL,
+        .valid = 25,
+        .ageing = 500,
+        .long_press = 1000,
+    },
+};
+key_register(keys, sizeof(keys) / sizeof(keys[0]));
+
+/* 重置按键 */
+key_reset(KEY_ID);
+
+/* 修改按键，25ms 有效电平过滤，500ms 老化时间，3000ms 长按判定时间 */
+key_modify(KEY_ID, getKey, NULL, 25, 500, 3000);
 
 /* 注销按键 */
 key_unregister(KEY_ID);
 
 /* 1ms 周期执行 */
-KEY *key = key_find_by_id(KEY_ID);
-KEY_EVENT k_ev = combo_key_event_check(key);
+KEY *key = NULL;
+COMBO_KEY_FOR_EACH(key) {
+    switch (combo_key_event_check(key)) {
+        case KE_PRESS: {
+            /* 按下 */
+        } break;
+        case KE_RELEASE: {
+            /* 松开 */
+        } break;
+        case KE_LONG_PRESS: {
+            /* 长按 */
+        } break;
+        case KE_LONG_RELEASE: {
+            /* 长按松开 */
+        } break;
+        case KE_COMBO: {
+            /* 连击 */
+        } break;
+        case KE_COMBO_RELEASE: {
+            /* 连击结束 */
+        } break;
+        default: {
+        } break;
+    }
+}
 ```
 
 当无按键事件时 `k_ev` 的值为 `KE_NONE`，其它值：`KE_PRESS`、`KE_RELEASE`、`KE_LONG_PRESS`、`KE_LONG_RELEASE`、`KE_COMBO_PRESS`、`KE_COMBO_RELEASE`
