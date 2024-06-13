@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#define KEY_NUM_MAX 1
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,11 +30,10 @@ typedef enum {
     KE_COMBO_RELEASE,
 } KEY_EVENT;
 
-typedef struct {
+typedef struct __KEY {
     KEY_STATUS status;      // 内部按键状态
     KEY_EVENT event;        // 按键事件
     uint16_t id;            // 按键 ID
-    uint16_t enable;        // 是否使能
     uint16_t valid;         // 电平有效时间
     uint16_t ageing;        // 老化时间
     uint16_t long_press;    // 长按判定时间
@@ -46,20 +43,26 @@ typedef struct {
     uint16_t release_time;  // 按键松开次数
     KEY_VALUE (*get)(void); // 按键状态获取回调
     void *custom_data;      // 按键额外附带信息
+    struct __KEY *next;     // 链表下一个按键
 } KEY;
 
 KEY *key_list_get(int *num);
 KEY *key_find_by_id(int id);
+
+int8_t key_unregister(uint16_t id);
+int key_register(KEY *keys, int num);
+int8_t key_reset(uint16_t id);
+int8_t key_modify(uint16_t id, KEY_VALUE (*get)(void), void *custom_data, uint16_t valid, uint16_t ageing, uint16_t long_press);
+
 KEY_EVENT key_event_get(KEY *key);
 int key_combo_press_count(KEY *key);
 int key_combo_release_count(KEY *key);
-
-int8_t key_register(uint16_t id, KEY_VALUE (*get)(void), void *custom_data, uint16_t valid, uint16_t ageing, uint16_t long_press);
-int8_t key_unregister(uint16_t id);
 KEY_EVENT combo_key_event_check(KEY *key);
 
 #ifdef __cplusplus
 }
 #endif
+
+#define COMBO_KEY_FOR_EACH(pos) for ((pos) = key_list_get(NULL); (pos); (pos) = (pos)->next)
 
 #endif
