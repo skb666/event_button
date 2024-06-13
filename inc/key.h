@@ -27,8 +27,7 @@ typedef enum {
 typedef struct {
     KEY_STATUS status;
     int count;
-    KEY_VALUE (*get)
-    (void);
+    KEY_VALUE (*get)(void);
 } KEY;
 
 KEY_EVENT key_event_check(KEY *key, int interval);
